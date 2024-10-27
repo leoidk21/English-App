@@ -1,21 +1,54 @@
-import React from 'react';
-import {StyleSheet, Text, View, Image, StatusBar, Platform, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Alert, TextInput, TouchableOpacity, Platform, StatusBar, SafeAreaView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import colors from '../Config/colors.js';
 import { useFonts } from 'expo-font';
-function SignUpScreen() {
-    const navigation = useNavigation();
-    const [loaded] = useFonts({
-      'InriaSansRegular': require('../assets/fonts/InriaSans-Regular.ttf'),
-      'InriaSansBold': require('../assets/fonts/InriaSans-Bold.ttf'),
-      'InterRegular': require('../assets/fonts/Inter_18pt-Regular.ttf'),
-      'InterBold': require('../assets/fonts/Inter_18pt-Bold.ttf'),
-      'PaytoneRegular': require('../assets/fonts/PaytoneOne-Regular.ttf'),
-    });
+import colors from '../Config/colors.js';
 
-    if (!loaded) {
-      return null;
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+
+function SignUpScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigation = useNavigation();
+
+  const isFormValid = () =>
+    email.includes("@") && password === confirmPassword && password.length >= 8;
+
+  const handleSignup = async () => {
+    if (!isFormValid()) {
+      Alert.alert(
+        "Try again",
+        "Please enter a valid email and matching passwords with at least 8 characters"
+      );
+      return;
     }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert("Success", "Account created successfully");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      navigation.navigate("Login");
+    } catch (error) {
+      Alert.alert("Error", `Error creating user: ${error.message}`);
+    }
+  };
+
+  const [loaded] = useFonts({
+    'InriaSansRegular': require('../assets/fonts/InriaSans-Regular.ttf'),
+    'InriaSansBold': require('../assets/fonts/InriaSans-Bold.ttf'),
+    'InterRegular': require('../assets/fonts/Inter_18pt-Regular.ttf'),
+    'InterBold': require('../assets/fonts/Inter_18pt-Bold.ttf'),
+    'PaytoneRegular': require('../assets/fonts/PaytoneOne-Regular.ttf'),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -30,18 +63,10 @@ function SignUpScreen() {
             <View style={styles.form}>
                 <View style={styles.inputContainer}>
                 <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    autoCompleteType="email"
-                />
-                </View>
-                <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Username"
-                    autoCapitalize="none"
-                    autoCompleteType="username"
+                   style={styles.input}
+                   placeholder="Email"
+                   value={email}
+                   onChangeText={setEmail}
                 />
                 </View>
                 <View style={styles.inputContainer}>
@@ -49,18 +74,30 @@ function SignUpScreen() {
                     style={styles.input}
                     placeholder="Password"
                     secureTextEntry
-                    autoCapitalize="none"
-                    autoCompleteType="password"
+                    value={password}
+                    onChangeText={setPassword}
                 />
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.buttonText}>Sign Up</Text>
+                <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Confirm Password"
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                />
+                </View>
+                <TouchableOpacity style={styles.button} onPress={handleSignup}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
+                
                 <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.signupLink}>Login</Text>
-                </TouchableOpacity>
+                    <Text style={styles.signupText}>
+                      Have an account?
+                    </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.signupLink}>Login</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
