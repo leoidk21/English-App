@@ -409,14 +409,11 @@ const styles = StyleSheet.create({
         color: colors.watchbackground,
         fontFamily: 'InterRegular',
     },
-
     personDescriptionContainer: {
         width: '80%',
         height: 100,
         top: -25,
-        
     },
-    
     personDescription: { 
         fontSize: 12,
         color: colors.primary, 

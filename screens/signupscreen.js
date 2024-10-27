@@ -3,10 +3,8 @@ import {StyleSheet, Text, View, Image, StatusBar, Platform, SafeAreaView, TextIn
 import { useNavigation } from '@react-navigation/native';
 import colors from '../Config/colors.js';
 import { useFonts } from 'expo-font';
-
 function SignUpScreen() {
     const navigation = useNavigation();
-
     const [loaded] = useFonts({
       'InriaSansRegular': require('../assets/fonts/InriaSans-Regular.ttf'),
       'InriaSansBold': require('../assets/fonts/InriaSans-Bold.ttf'),

@@ -3,8 +3,6 @@ import {StyleSheet, Text, View, Image, StatusBar, Platform, SafeAreaView, TextIn
 import { useNavigation } from '@react-navigation/native';
 import colors from '../Config/colors.js';
 import { useFonts } from 'expo-font';
-
-
 function LoginScreen() {
   const navigation = useNavigation();
   const [loaded] = useFonts({
@@ -18,9 +16,6 @@ function LoginScreen() {
   if (!loaded) {
     return null;
   }
-
-
-
 
     return (
         <SafeAreaView style={styles.container}>
